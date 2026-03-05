@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat Sidebar Layout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- Top Header -->
+<div class="topbar">
+    <div class="topbar-title">My Website Header</div>
+    <button class="icon-btn" id="toggleChat">Chat</button>
+    <button class="icon-btn" id="sendOutput">Test</button>
+
+</div>
+
+<!-- Main Content -->
+<div class="content">
+    <h2>Main Content</h2>
+    <p>This page includes a right-side chat panel that can be toggled.</p>
+</div>
+
+<!-- Chat Sidebar -->
+<div class="sidebar-right" id="chatSidebar">
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type a message..." />
+            <button id="sendBtn">Send</button>
+    </div>
+
+</div>
+
+<script src="chatsb.js"></script>
+</body>
+</html>
