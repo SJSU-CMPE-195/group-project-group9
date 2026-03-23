@@ -4,6 +4,7 @@ const input = document.getElementById("chatInput");
 const sendBtn = document.getElementById("sendBtn");
 const messages = document.getElementById("chatMessages");
 const test = document.getElementById("sendOutput");
+const resizeHandle = document.getElementById("resizeHandle");
 
 /* Toggle sidebar */
 toggleBtn.onclick = () => {
@@ -40,8 +41,6 @@ function sendOuput() {
     input.value = "";
 }
 
-
-
 sendBtn.onclick = sendMessage;
 test.onclick = sendOuput;
 
@@ -49,6 +48,39 @@ input.addEventListener("keypress", function(e){
     if(e.key === "Enter"){
         sendMessage();
     }
+});
+
+/* Resize sidebar by dragging left edge */
+let isResizing = false;
+
+resizeHandle.addEventListener("mousedown", function(e) {
+    e.preventDefault();
+    isResizing = true;
+    document.body.style.cursor = "ew-resize";
+    document.body.style.userSelect = "none";
+});
+
+document.addEventListener("mousemove", function(e) {
+    if (!isResizing) return;
+
+    e.preventDefault();
+
+    const minWidth = 250;
+    const maxWidth = window.innerWidth * 0.8;
+    let newWidth = window.innerWidth - e.clientX;
+
+    if (newWidth < minWidth) newWidth = minWidth;
+    if (newWidth > maxWidth) newWidth = maxWidth;
+
+    sidebar.style.width = newWidth + "px";
+});
+
+document.addEventListener("mouseup", function() {
+    if (!isResizing) return;
+
+    isResizing = false;
+    document.body.style.cursor = "";
+    document.body.style.userSelect = "";
 });
 
 // fetch URL and convert to PDF
