@@ -207,6 +207,22 @@ body {
     align-self: flex-start;
     max-width: 80%;
 }
+.output-message h3 {
+    margin: 12px 0 8px;
+    font-size: 1.1rem;
+}
+
+.output-message p {
+    margin: 8px 0;
+}
+
+.output-message ul {
+    margin: 8px 0 8px 20px;
+}
+
+.output-message li {
+    margin: 4px 0;
+}
 
 #fileUploadPanel {
     position: fixed;

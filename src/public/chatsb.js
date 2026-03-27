@@ -60,12 +60,12 @@ async function sendMessage() {
       }
 
       const reply = data?.choices?.[0]?.message?.content || "(no reply)";
-      messages.prepend(createMsg("output-message", reply));
+      sendOutput(reply);
       chatHistory.push({ role: "assistant", content: reply });
 
     } catch (err) {
       console.error(err);
-      messages.prepend(createMsg("output-message", "Error: " + err.message));
+      sendOutput("Error: " + err.message);
     }
 }
 
@@ -77,11 +77,14 @@ function createMsg(className, text) {
 }
 
 /* Send Output to message (test) */
-function sendOuput() {
+function sendOutput(markdownText) {
     const msg = document.createElement("div");
     msg.className = "output-message";
-    msg.textContent = text;
 
+    const rawHtml = marked.parse(markdownText);
+    const safeHtml = DOMPurify.sanitize(rawHtml);
+
+    msg.innerHTML = safeHtml;
     messages.prepend(msg);
 }
 
