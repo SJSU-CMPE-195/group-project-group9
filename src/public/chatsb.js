@@ -21,38 +21,72 @@ function closeChat() {
 openChatBtn.addEventListener("click", openChat);
 closeChatBtn.addEventListener("click", closeChat);
 
+let chatHistory = [
+    { role: "system", content: "You are a helpful assistant." }
+];
+
 /* Send message */
-function sendMessage() {
+async function sendMessage() {
     const text = input.value.trim();
-    if (text === "") return;
+    if (!text) return;
 
-    const msg = document.createElement("div");
-    msg.className = "message";
-    msg.textContent = text;
-
-    // bottom aligned chat (older messages moved up)
-    messages.prepend(msg);
-
+    messages.prepend(createMsg("message", text));
     input.value = "";
+
+    chatHistory.push({ role: "user", content: text });
+
+    const payload = {
+      model: "qwen/qwen3.5-9b",
+      messages: chatHistory,
+      temperature: 0.7
+    };
+
+    console.log("Sending JSON:", JSON.stringify(payload));
+
+    try {
+      const response = await fetch("http://localhost:1234/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+      console.log("Response JSON:", data);
+
+      if (!response.ok) {
+        throw new Error(data?.error?.message || "Request failed");
+      }
+
+      const reply = data?.choices?.[0]?.message?.content || "(no reply)";
+      messages.prepend(createMsg("output-message", reply));
+      chatHistory.push({ role: "assistant", content: reply });
+
+    } catch (err) {
+      console.error(err);
+      messages.prepend(createMsg("output-message", "Error: " + err.message));
+    }
+}
+
+function createMsg(className, text) {
+    const div = document.createElement("div");
+    div.className = className;
+    div.textContent = text;
+    return div;
 }
 
 /* Send Output to message (test) */
 function sendOuput() {
-    const text = input.value.trim();
-    if (text === "") return;
-
     const msg = document.createElement("div");
     msg.className = "output-message";
     msg.textContent = text;
 
-    // bottom aligned chat (older messages moved up)
     messages.prepend(msg);
-
-    input.value = "";
 }
 
 sendBtn.onclick = sendMessage;
-test.onclick = sendOuput;
+//test.onclick = sendOuput;
 
 input.addEventListener("keypress", function(e){
     if(e.key === "Enter"){
