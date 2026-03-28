@@ -1,3 +1,4 @@
+import { loadPDF } from "./view.js";
 const filesPanel = document.getElementById("fileUploadPanel");
 
 let fileInput = [];
@@ -40,7 +41,13 @@ function handleFileSelect(event) {
     event.preventDefault();
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
     for (let i = 0; i < files.length; i++) {
-        fileInput.push(files[i]);
+        const file = files[i];
+        fileInput.push(file);
+        if (file.type === "application/pdf") {
+            const fileURL = URL.createObjectURL(file);
+            document.getElementById("pdfViewer").style.display = "block";
+            loadPDF(fileURL);
+        }
     }
     showFilesList();
 }

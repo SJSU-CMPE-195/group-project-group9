@@ -4,7 +4,7 @@ import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
      // get the worker code as well
      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
      // setting our pdf url
-     const url = "./StanfordPaper1.pdf"
+     const url = "./StanfordPaper1.pdf";
 
      // getting the document object
      const doc = pdfjsLib.getDocument(url);
@@ -88,6 +88,21 @@ function addText(text) {
         // Now add to div
         textDiv.appendChild(newPtag);
     }
+}
+
+export async function loadPDF(fileURL) {
+    const doc = pdfjsLib.getDocument(fileURL);
+    const pdf = await doc.promise;
+    const page = await pdf.getPage(1);
+    const scale = 1;
+    const viewport = page.getViewport({scale});
+    const canvas = document.getElementById("pdf");
+    const context = canvas.getContext("2d");
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    await page.render({canvasContext: context, viewport});
+    const text = await page.getTextContent();
+    addText(text);
 }
 
 
