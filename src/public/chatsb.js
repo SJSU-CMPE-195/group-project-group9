@@ -36,7 +36,7 @@ async function sendMessage() {
     chatHistory.push({ role: "user", content: text });
 
     // Temporary loading message
-    const loadingMsg = createMsg("thinking-message", "Thinking...");
+    const loadingMsg = createMsg("thinking-message", "Thinking");
     messages.prepend(loadingMsg);
 
     const payload = {
