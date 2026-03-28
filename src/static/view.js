@@ -4,7 +4,7 @@ import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
      // get the worker code as well
      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
      // setting our pdf url
-     const url = "./StanfordPaper1.pdf"
+     const url = "../static/StanfordPaper1.pdf"
 
      // getting the document object
      const doc = pdfjsLib.getDocument(url);
@@ -44,7 +44,8 @@ import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
 let button =  document.getElementById("NextLine");
 let pageButton = document.getElementById("nextPage");
 var textDiv = document.getElementById("textDiv");
-
+var stepIn = document.getElementById("stepIn")
+var currentText = null;
 addText(text);
 var numTimes = -1;
 button.addEventListener("click", function() {
@@ -56,12 +57,23 @@ button.addEventListener("click", function() {
           textDiv.childNodes[numTimes-1].style.backgroundColor = "transparent";
        }
        textDiv.childNodes[numTimes].style.backgroundColor = "yellow";
+       currentText = textDiv.childNodes[numTimes].innerText;
     }
 });
 
+stepIn.addEventListener("click", function() {
+     if(currentText == null) {
+        alert("No line works");
+     }
+     else {
+        alert(currentText);
+     }
+});
 pageButton.addEventListener("click", function() {
     getNextPage();
 });
+
+
 
 
 async function getNextPage() {
