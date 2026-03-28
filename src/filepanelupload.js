@@ -54,12 +54,18 @@ function removeFile(index) {
     showFilesList();
 }
 
+import { setFileOrder, loadFileByIndex } from "./filenav.js";
 function handleFileSelect(event) {
     event.preventDefault();
     const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+
     for (let i = 0; i < files.length; i++) {
         fileInput.push(files[i]);
     }
+
+    setFileOrder(fileInput);
+    loadFileByIndex(0);
+
     showFilesList();
 }
 
