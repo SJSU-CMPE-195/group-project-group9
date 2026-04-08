@@ -40,7 +40,7 @@ async function sendMessage() {
     messages.prepend(loadingMsg);
 
     const payload = {
-        model: "qwen/qwen3.5-9b",
+        model: "qwen3.5:9b",
         messages: chatHistory,
         temperature: 0.7,
         stream: true
@@ -49,7 +49,7 @@ async function sendMessage() {
     try {
         await new Promise(requestAnimationFrame);
 
-        const response = await fetch("http://localhost:1234/v1/chat/completions", {
+        const response = await fetch("http://localhost:11434/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
