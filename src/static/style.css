@@ -8,6 +8,32 @@ body {
     font-family: Arial, sans-serif;
 }
 
+viewer-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+viewer-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--topbar-height);
+}
+
+viewer-right {
+    width: var(--sidebar-width);
+    min-width: 250px;
+    max-width: 80vw;
+    background: #f5f5f5;
+    border-left: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    z-index: 900;
+    box-sizing: border-box;
+    padding: 15px;
+}
+
 /* Top Header */
 .topbar{
     position: fixed;
