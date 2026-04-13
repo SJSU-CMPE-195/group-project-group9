@@ -12,73 +12,73 @@
 </head>
 
 <body>
-
-
     <!-- Top Header -->
     <div class="topbar">
         <div class="topbar-title">LearningDebugger</div>
-    </div>
-
-    <!-- File Upload Panel -->
-    <div class="sidebar-left" id="fileUploadPanel"></div>
-
-    <!-- Main Content -->
-    <div class="content">
-        <h2>Main Content</h2>
-        <p>This page includes a right-side chat panel that can be toggled.</p>
-        <div class="viewer-container">
-            <div class="viewer-left">
-                <button id="NextLine">Next Line</button>
-                <button id="prevLine">Previous Line</button>
-                <button id="nextPage">Next Page</button>
-                <button id="prevPage">Previous Page</button>
-                <button id="togglePdf">Show/Hide PDF</button>
-                <button id="stepIn">Step In</button>
-                <button id="stepOut">Step Out</button>
-                <canvas id="pdf"
-                    style="position:absolute; right: 100px;border: 1px solid black; direction:ltr"></canvas>
+        <div class="viewer-buttons">
+            <button id="NextLine">Next Line</button>
+            <button id="prevLine">Previous Line</button>
+            <button id="nextPage">Next Page</button>
+            <button id="prevPage">Previous Page</button>
+            <button id="togglePdf">Show/Hide PDF</button>
+            <button id="stepIn">Step In</button>
+            <button id="stepOut">Step Out</button>
             </div>
-            <div class="viewer-right">
-                <div id="textDiv" style="overflow:auto; width: 500px; height:100%; left: 300px; border: 1px solid">
+        </div>
+
+        <!-- File Upload Panel -->
+        <div class="sidebar-left" id="fileUploadPanel"></div>
+
+        <div class="upload-fileslist" id="uploadedFilesList"></div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div id="fetch-section">
+                    <input type="text" id="fetch-url" placeholder="Enter webpage URL..." />
+                    <button id="fetch-btn">Fetch Page</button>
+                    <button id="export-pdf-btn" disabled>Export PDF</button>
+                    <p id="fetch-status"></p>
+                </div>
+            <div class="viewer-container">
+                <div class="viewer-left">
+                    <canvas id="pdf"
+                        style="border: 1px solid black; direction:ltr"></canvas>
+                </div>
+                <div class="viewer-right">
+                    <div id="textDiv">
+                    </div>
                 </div>
             </div>
-            <div id="fetch-section">
-                <input type="text" id="fetch-url" placeholder="Enter webpage URL..." />
-                <button id="fetch-btn">Fetch Page</button>
-                <button id="export-pdf-btn" disabled>Export PDF</button>
-                <p id="fetch-status"></p>
+
+            <!-- Chat Sidebar -->
+            <div class="sidebar-right" id="chatSidebar">
+                <div class="resize-handle" id="resizeHandle"></div>
+
+                <div class="chat-header">
+                    <button class="close-chat-btn" id="closeChatBtn">×</button>
+                    <div class="chat-header-title">Chat</div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages"></div>
+
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Type a message..." />
+                    <button id="sendBtn">Send</button>
+                </div>
             </div>
-        </div>
 
-        <!-- Chat Sidebar -->
-        <div class="sidebar-right" id="chatSidebar">
-            <div class="resize-handle" id="resizeHandle"></div>
+            <!-- Floating buttons -->
+            <button class="chat-fab" id="openChatBtn">Chat</button>
+            <button class="upload-fab" id="openUploadBtn">Select Files</button>
 
-            <div class="chat-header">
-                <button class="close-chat-btn" id="closeChatBtn">×</button>
-                <div class="chat-header-title">Chat</div>
-            </div>
+            <div id="pdf-source"
+                style="position:absolute; left:-9999px; width:800px; background:#fff; color:#000; padding:20px;"></div>
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
 
-            <div class="chat-messages" id="chatMessages"></div>
-
-            <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="Type a message..." />
-                <button id="sendBtn">Send</button>
-            </div>
-        </div>
-
-        <!-- Floating buttons -->
-        <button class="chat-fab" id="openChatBtn">Chat</button>
-        <button class="upload-fab" id="openUploadBtn">Upload</button>
-
-        <div id="pdf-source"
-            style="position:absolute; left:-9999px; width:800px; background:#fff; color:#000; padding:20px;"></div>
-        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
-
-        <script src="{{ url_for('static', filename='chatsb.js') }}"></script>
-        <script src="{{ url_for('static', filename='filepanelupload.js') }}"></script>
-        <script type ="module" src="{{ url_for('static', filename='view.js') }}"></script>
-    </body>
+            <script src="{{ url_for('static', filename='chatsb.js') }}"></script>
+            <script src="{{ url_for('static', filename='filepanelupload.js') }}"></script>
+            <script type="module" src="{{ url_for('static', filename='view.js') }}"></script>
+</body>
 
 </html>

@@ -185,12 +185,15 @@ function addText(text) {
 
 const toggleBtn = document.getElementById("togglePdf");
 const pdfContainer = document.getElementById("pdf");
+const viewer = document.querySelector(".viewer-container");
 
 toggleBtn.addEventListener("click", function() {
     if (pdfContainer.style.display === "none") {
         pdfContainer.style.display = "block";
+        viewer.classList.remove("single-column");
     } else {
         pdfContainer.style.display = "none";
+        viewer.classList.add("single-column");
     }
 });
 
