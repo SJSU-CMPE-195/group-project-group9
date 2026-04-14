@@ -53,6 +53,7 @@ let nextPageBtn = document.getElementById("nextPage");
 var textDiv = document.getElementById("textDiv");
 let fileOrder = [];
 let currFileIndex = 0;
+var stepInText;
 
 export function setFileOrder(inputStr) {
     fileOrder = inputStr.split(",").map(str => str.trim());
@@ -65,9 +66,16 @@ export function setCurrFile(fileName) {
 document.getElementById("stepIn").addEventListener("click", stepIn);
 document.getElementById("stepOut").addEventListener("click", stepOut);
 export async function stepIn(){
+    if (numTimes >= 0) {
+        stepInText = textDiv.childNodes[numTimes].innerText;
+    }
     if (currFileIndex < fileOrder.length - 1) {
         currFileIndex++;
         await loadFile(fileOrder[currFileIndex]);
+    }
+    // When out of files, request a webpage.
+    else {
+         getWebPage();
     }
 }
 
@@ -100,7 +108,7 @@ async function loadFile(fileName) {
 }
 
 
-numTimes = -1;
+
 nextLineBtn.addEventListener("click", function() {
     if (!text || !text.items || text.items.length === 0) {
         return; // No text to navigate through
@@ -114,7 +122,8 @@ nextLineBtn.addEventListener("click", function() {
        numTimes++;
     textDiv.childNodes[numTimes].style.backgroundColor = "yellow";
     textDiv.childNodes[numTimes].scrollIntoView({behavior: "smooth", block: "center"});
-}
+    }
+
 });
 
 let prevLineBtn = document.getElementById("prevLine");
@@ -130,10 +139,10 @@ prevLineBtn.addEventListener("click", function() {
     }
 });
 
-stepInBtn.addEventListener("click", function() {
+/*stepInBtn.addEventListener("click", function() {
     // add a branch to check if they have documents left to step into before requesting a webpage.
     getWebPage();
-});
+});*/
 let prevPageBtn = document.getElementById("prevPage");
 prevPageBtn.addEventListener("click", function() {
     getPrevPage();
@@ -179,12 +188,13 @@ async function getWebPage() {
       headers: {
          "Content-Type": "application/json",
       },
-      body: JSON.stringify(currentText),
+      body: JSON.stringify(stepInText),
 
     });
     var result = await response.json();
     var resultObj = JSON.parse(result);
-    alert(resultObj.link)
+    alert("link:" + resultObj.link + "text: " + resultObj.text)
+
 }
 function addText(text) {
     // clears the text div

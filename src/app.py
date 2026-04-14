@@ -8,7 +8,7 @@ CORS(app)
 
 @app.route("/")
 def initial():
-    return render_template("pdfViewer.html")
+    return render_template("app.html")
 
 # get the get request/get text from the response. 
 # create a get request for a webpage, and then generate the pdf.
@@ -20,9 +20,6 @@ def getW():
     jsonResult = jsonify(json.dumps(jsonObj))
     return jsonResult
 
-@app.route("/app")
-def home():
-    return render_template("app.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
