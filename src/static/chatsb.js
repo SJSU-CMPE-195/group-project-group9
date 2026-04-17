@@ -6,8 +6,12 @@ const closeChatBtn = document.getElementById("closeChatBtn");
 const input = document.getElementById("chatInput");
 const sendBtn = document.getElementById("sendBtn");
 const messages = document.getElementById("chatMessages");
-const test = document.getElementById("sendOutput");
 const resizeHandle = document.getElementById("resizeHandle");
+
+const chatOptionsBtn = document.getElementById("chatOptionsBtn");
+const chatOptionsMenu = document.getElementById("chatOptionsMenu");
+const clearChatOption = document.getElementById("clearChatOption");
+const clearChatHistoryOption = document.getElementById("clearChatHistoryOption");
 
 /* Toggle sidebar */
 function openChat() {
@@ -26,6 +30,30 @@ closeChatBtn.addEventListener("click", closeChat);
 let chatHistory = [
     { role: "system", content: "You are a helpful assistant." }
 ];
+
+/* Chat options menu */
+chatOptionsBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    chatOptionsMenu.classList.toggle("hidden");
+});
+
+document.addEventListener("click", function (e) {
+    if (!chatOptionsMenu.contains(e.target) && e.target !== chatOptionsBtn) {
+        chatOptionsMenu.classList.add("hidden");
+    }
+});
+
+clearChatOption.addEventListener("click", function () {
+    messages.innerHTML = "";
+    chatOptionsMenu.classList.add("hidden");
+});
+
+clearChatHistoryOption.addEventListener("click", function () {
+    chatHistory = [
+        { role: "system", content: "You are a helpful assistant." }
+    ];
+    chatOptionsMenu.classList.add("hidden");
+});
 
 /* Send message */
 async function sendMessage() {
