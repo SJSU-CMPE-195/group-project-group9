@@ -29,14 +29,15 @@ let chatHistory = [
 
 /* Send message */
 async function sendMessage() {
-    console.log("chatHistory after user message:", chatHistory);
     const text = input.value.trim();
+    console.log("chatHistory:", chatHistory);
     if (!text) return;
 
-    if (text.includes('[Page]')) {
+    if (text.includes("[Page]")) {
         const currentPageText = getCurrentPageText();
-        chatHistory.push({ role: "user", content: currentPageText});
+        chatHistory.push({ role: "user", content: currentPageText });
         messages.prepend(createMsg("message", text + ": Current Page Added to Context"));
+        input.value = "";
         return;
     }
 
@@ -44,37 +45,32 @@ async function sendMessage() {
     input.value = "";
 
     chatHistory.push({ role: "user", content: text });
+    console.log("chatHistory:", chatHistory);
 
-    // Temporary loading message
     const loadingMsg = createMsg("thinking-message", "Thinking");
     messages.prepend(loadingMsg);
 
-    const payload = {
-        model: "tinyllama:latest",
-        messages: chatHistory,
-        temperature: 0.7,
-        stream: true
-    };
-
     try {
-        await new Promise(requestAnimationFrame);
-
-        const response = await fetch("http://localhost:11434/v1/chat/completions", {
+        const response = await fetch("/chatMessage", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                chatHistory: chatHistory
+            })
         });
 
         if (!response.ok) {
             const errText = await response.text();
             throw new Error(errText || "Request failed");
         }
-
+        
         if (!response.body) {
             throw new Error("Streaming not supported by this response");
         }
+
+        loadingMsg.remove();
 
         const msg = document.createElement("div");
         msg.className = "output-message";
@@ -84,53 +80,18 @@ async function sendMessage() {
         const decoder = new TextDecoder("utf-8");
 
         let fullReply = "";
-        let buffer = "";
-        let streamFinished = false;
 
-        while (!streamFinished) {
+        while (true) {
             const { value, done } = await reader.read();
             if (done) break;
 
-            buffer += decoder.decode(value, { stream: true });
+            const chunkText = decoder.decode(value, { stream: true });
+            fullReply += chunkText;
 
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-                const trimmed = line.trim();
-                if (!trimmed.startsWith("data:")) continue;
-
-                const dataStr = trimmed.slice(5).trim();
-
-                if (dataStr === "[DONE]") {
-                    break;
-                }
-
-                try {
-                    const data = JSON.parse(dataStr);
-                    const token = data?.choices?.[0]?.delta?.content || "";
-
-                    if (token) {
-                        fullReply += token;
-
-                        const rawHtml = marked.parse(fullReply);
-                        const safeHtml = DOMPurify.sanitize(rawHtml);
-                        msg.innerHTML = safeHtml;
-                    }
-                } catch (e) {
-                    console.warn("Bad stream chunk:", dataStr);
-                }
-            }
+            msg.innerHTML = cleanText(fullReply);
         }
-        loadingMsg.remove();
-        // Final markdown render after stream completes
-        const rawHtml = marked.parse(fullReply || "(no reply)");
-        const safeHtml = DOMPurify.sanitize(rawHtml);
-        msg.innerHTML = safeHtml;
 
         chatHistory.push({ role: "assistant", content: fullReply || "(no reply)" });
-        // Remove loading message and create live output box
-        
 
     } catch (err) {
         console.error(err);
@@ -151,11 +112,13 @@ function sendOutput(markdownText) {
     const msg = document.createElement("div");
     msg.className = "output-message";
 
-    const rawHtml = marked.parse(markdownText);
-    const safeHtml = DOMPurify.sanitize(rawHtml);
-
-    msg.innerHTML = safeHtml;
+    msg.innerHTML = cleanText(markdownText);
     messages.prepend(msg);
+}
+
+function cleanText(text) {
+    const rawHtml = marked.parse(text || "");
+    return DOMPurify.sanitize(rawHtml);
 }
 
 sendBtn.onclick = sendMessage;

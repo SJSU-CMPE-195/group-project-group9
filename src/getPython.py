@@ -44,5 +44,13 @@ def getPrompt(line):
    results.append(textStr)
    return results
 
+def getChatResponse(chatHistory):
+    
+    return chat(
+        model="tinyllama:latest",
+        messages=chatHistory,
+        options={"temperature": 0.7},
+        stream=True
+    )
 
    
