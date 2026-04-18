@@ -34,7 +34,7 @@ This web application is an AI assistant that allows the user to cluster study ma
 
 | Feature | Screenshot |
 |---------|------------|
-| [Chat: Current Full Page into Context] | ![Screenshot](docs/ChatPageContext) |
+| [Chat: Current Full Page into Context] | ![Screenshot](docs/ChatPageContext.png) |
 | [Feature 2] | ![Screenshot](docs/screenshots/feature2.png) |
 
 ---
