@@ -1,6 +1,6 @@
 from ollama import chat
 from ollama import ChatResponse
-
+from pypdf import PdfReader
 def getPrompt(line):
    print("Sending Prompt")
 # specify the string from the file.
@@ -8,14 +8,15 @@ def getPrompt(line):
    response: ChatResponse = chat(model='minimax-m2.7:cloud', messages=[
       {
          'role': 'user',
-         'content': 'From the training data, can you give a website with more info and relevant text from it, (PLEASE FOLLOW FORMAT) please structure the prompt with sections link: and text:' + 
-                    'The user is confused about ' + line
+         'content': 'From the training data, can you give a website with more info and relevant text from it, (PLEASE FOLLOW FORMAT EXACTLY) please structure the response with sections link: and text: ' +
+           'The user is confused about ' + line,
       },
 
    ])
 
    # response.message.content has the response from the model.
    promptResponse = response.message.content
+   print(promptResponse)
    # store the length of the starting strings
    linkLen = len("link: ")
    textLen = len("text: ")
@@ -34,11 +35,13 @@ def getPrompt(line):
    textStr = promptResponse[textEnd:]
    results = []
    #Checks for errors.
-   if(linkInd == -1):
-      print("link was not found: ")
+   if(linkInd == -1 and textInd != -1):
+      results.append("No link")
+      results.append(textStr)
       return results
    if(textInd == -1):
-      print("text was not found")
+      results.append("No text")
+      results.append("No link")
       return results
    results.append(linkStr)
    results.append(textStr)
@@ -53,4 +56,25 @@ def getChatResponse(chatHistory):
         stream=True
     )
 
-   
+def getRelevantText(line, fileName):
+   print("Sending step In prompt")
+   document = PdfReader('./static/' + fileName)
+   length = len(document.pages)
+   if(len(document.pages) > 20):
+      length = 20
+   text = ""
+   for i in range(length):
+       text += document.pages[i].extract_text()
+   response: ChatResponse = chat(model='minimax-m2.7:cloud', messages=[
+      {
+         'role': 'user',
+         'content': 'From the following text: ' + text + 'Give me ONLY (NO OTHER INFO OR REASONING, KEEP THE SAME PUNCTUATION) the most relevant sections directly or INDIRECTLY related to (MUST ANSWER with text in the supplied text NO MATTER WHAT)  ' + line
+      },
+
+   ])
+   promptRes = response.message.content 
+   print(promptRes)
+   """for i in range(len(document.pages)):
+      if(document.pages[i].extract_text().strip().find(promptRes.strip()) != -1):
+          pageNum = i"""
+   return promptRes

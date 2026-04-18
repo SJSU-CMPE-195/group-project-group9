@@ -1,13 +1,21 @@
 from flask import Flask, jsonify, request, render_template, Response, stream_with_context
 from flask_cors import CORS
 import json
+import chromadb
 import getPython as gP
 app = Flask(__name__)
+chromaClient = None
+chromaCollection = None
 # allow requests from multiple origins.
 CORS(app)
 
 @app.route("/")
 def initial():
+    global chromaClient
+    global chromaCollection
+    if chromaClient is None:
+        chromaClient = chromadb.PersistentClient(path="./")
+        chromaCollection = chromaClient.get_or_create_collection(name="collection")
     return render_template("app.html")
 
 # get the get request/get text from the response. 
@@ -18,8 +26,24 @@ def getW():
     list = gP.getPrompt(response)
     jsonObj = {"link": list[0], "text": list[1]}
     jsonResult = jsonify(json.dumps(jsonObj))
+    # add this webpages text for future requests.
+    """chromaCollection.add (
+        ids={json.dumps(response)},
+        documents={json.dumps(jsonObj)},
+    )"""
+    jsonResult = jsonify(json.dumps(jsonObj))
     return jsonResult
 
+@app.route("/stepIn", methods=["POST"]) 
+# store the step in that the user did.
+def stepIn():
+   data = request.get_json()
+   line = data.get("line")
+   fileName = data.get("fileName")
+   res = gP.getRelevantText(line, fileName)
+   #obj = {"text": res[0], "pageNum": res[1]}
+   #print(json.dumps(obj))
+   return jsonify(json.dumps(res))
 @app.route("/chatMessage", methods=["POST"])
 def chat_message():
     data = request.get_json()

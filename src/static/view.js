@@ -57,6 +57,7 @@ var stepInText;
 
 export function setFileOrder(inputStr) {
     fileOrder = inputStr.split(",").map(str => str.trim());
+
 }
 
 export function setCurrFile(fileName) {
@@ -66,19 +67,42 @@ export function setCurrFile(fileName) {
 document.getElementById("stepIn").addEventListener("click", stepIn);
 document.getElementById("stepOut").addEventListener("click", stepOut);
 export async function stepIn(){
+    var stepInChanged = 0
     if (numTimes >= 0) {
         stepInText = textDiv.childNodes[numTimes].innerText;
+        stepInChanged = 1
     }
     if (currFileIndex < fileOrder.length - 1) {
         currFileIndex++;
-        await loadFile(fileOrder[currFileIndex]);
+         await loadFile(fileOrder[currFileIndex]);
+         if(stepInChanged == 1) {
+          await getRelevantSection(stepInText, fileOrder[currFileIndex]);
+         }
+         else {
+            alert("No line was selected from the previous file")
+         }
     }
     // When out of files, request a webpage.
     else {
-         getWebPage();
+         await getWebPage();
     }
 }
 
+async function getRelevantSection(stepLine, file) {
+     var obj = {line: stepLine, fileName: file}
+     const response = await fetch("/stepIn", {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    });
+    var res = await response.json()
+    var str = JSON.parse(res)
+    // get the page.
+    // highlight any that start with, what we have and end with
+    alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + str)
+}
 export async function stepOut() {
     if (currFileIndex > 0) {
         currFileIndex--;
@@ -105,6 +129,7 @@ async function loadFile(fileName) {
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     page.render({ canvasContext: context, viewport});
+
 }
 
 
@@ -139,10 +164,6 @@ prevLineBtn.addEventListener("click", function() {
     }
 });
 
-/*stepInBtn.addEventListener("click", function() {
-    // add a branch to check if they have documents left to step into before requesting a webpage.
-    getWebPage();
-});*/
 let prevPageBtn = document.getElementById("prevPage");
 prevPageBtn.addEventListener("click", function() {
     getPrevPage();
@@ -187,6 +208,7 @@ async function getNextPage() {
     addText(text);
     const viewport = page.getViewport({scale});
     page.render({ canvasContext: context, viewport});
+    findText();
 }
 async function getWebPage() {
     // add a branch to check if there are no stepins.
@@ -200,9 +222,11 @@ async function getWebPage() {
     });
     var result = await response.json();
     var resultObj = JSON.parse(result);
+    // generate the pdf and load the file.
     alert("link:" + resultObj.link + "text: " + resultObj.text)
 
 }
+
 function addText(text) {
     // clears the text div
     textDiv.innerHTML = "";
@@ -216,6 +240,7 @@ function addText(text) {
         p.textContent = str;
         // Now add to div
         textDiv.appendChild(p);
+
     }
 }
 
