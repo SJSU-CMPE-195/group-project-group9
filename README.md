@@ -16,7 +16,7 @@
 ---
 ## Demo
 
-[Link to demo video or GIF]
+Basic UI functionality and Step In output demo (Look at the screenshots for other output): [UI demo](https://drive.google.com/file/d/16XsUY231yJXZWnG5HBh0N4AHuJ3Zo0-q/view?usp=sharing)
 
 **Live Demo:** [URL if deployed]
 
