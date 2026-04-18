@@ -168,8 +168,9 @@ Use clear, descriptive commit messages:
 
 ## Acknowledgments
 
-- [Resource/Library/Person]
-- [Resource/Library/Person]
+- Project Advisor KaiKai Liu for guidance and feedback during development
+- Flask, Flask-CORS, Ollama for open-source tools building project architecture and core functionality
+- All team members for collaboration and contributions
 
 ---
 
