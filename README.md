@@ -68,10 +68,6 @@ cd group-project-group9
 # Install dependencies
 pip install -r requirements.txt
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your values
-
 # Run database migrations (if applicable)
 [migration command]
 ```
