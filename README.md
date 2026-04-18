@@ -33,8 +33,9 @@ The proof of concepts demonstrates functional UI line by line document navigatio
 
 | Feature | Screenshot |
 |---------|------------|
-| [Chat: Current Full Page into Context] | ![Screenshot](docs/ChatPageContext.png) |
-| [Feature 2] | ![Screenshot](docs/screenshots/feature2.png) |
+| [Chat: Current Full Page into Context (to add current page in chat type "[Page]") | ![Screenshot](docs/ChatPageContext.png) |
+| [Step In Output] | ![Screenshot](docs/Step In Output. png.png) |
+| [Webpage Output] | ![Screenshot](docs/Webpage-Output.png) |
 
 ---
 
