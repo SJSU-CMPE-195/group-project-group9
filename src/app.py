@@ -64,14 +64,13 @@ def fetch_page():
             tag.decompose()
         text = soup.get_text(separator='\n').strip()
 
-        font_path = "/Library/Fonts/Arial Unicode.ttf"
         pdf = FPDF()
         pdf.add_page()
-        pdf.add_font('Arial', '', font_path)
         pdf.set_font('Arial', size=11)
+        text = text.encode("latin-1", "ignore").decode("latin-1")
         pdf.multi_cell(0, 7, text)
 
-        pdf_bytes = pdf.output()
+        pdf_bytes = pdf.output(dest="S").encode("latin-1")
         return send_file(
             io.BytesIO(bytes(pdf_bytes)),
             mimetype='application/pdf',
