@@ -1,11 +1,12 @@
 from ollama import chat
 from ollama import ChatResponse
 from pypdf import PdfReader
+# this is for webpage for information
 def getPrompt(line):
    print("Sending Prompt")
 # specify the string from the file.
    # Sends the chat reponse (from the Ollama github) 
-   response: ChatResponse = chat(model='minimax-m2.7:cloud', messages=[
+   response: ChatResponse = chat(model='qwen3:1.7b', messages=[
       {
          'role': 'user',
          'content': 'From the training data, can you give a website with more info and relevant text from it, (PLEASE FOLLOW FORMAT EXACTLY) please structure the response with sections link: and text: ' +
@@ -65,15 +66,16 @@ def getRelevantText(line, fileName):
    text = ""
    for i in range(length):
        text += document.pages[i].extract_text()
-   response: ChatResponse = chat(model='minimax-m2.7:cloud', messages=[
+   textarr = text.split("\n")
+   response: ChatResponse = chat(model='gemma4:31b-cloud', messages=[
       {
          'role': 'user',
-         'content': 'From the following text: ' + text + 'Give me ONLY (NO OTHER INFO OR REASONING, KEEP THE SAME PUNCTUATION) the most relevant sections directly or INDIRECTLY related to (MUST ANSWER with text in the supplied text NO MATTER WHAT)  ' + line
+         'content': 'From the following text: (MUST ANSWER WITH A SECTION FROM THIS TEXT ONLY) ' + text + 'Give me ONLY the most relevant text (ANSWER WITH JUST THIS TEXT) related to the following.' + line
       },
 
    ])
    promptRes = response.message.content 
-   print(promptRes)
+   print(promptRes)  
    """for i in range(len(document.pages)):
       if(document.pages[i].extract_text().strip().find(promptRes.strip()) != -1):
           pageNum = i"""

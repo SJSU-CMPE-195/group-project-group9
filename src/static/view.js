@@ -87,11 +87,8 @@ export async function stepIn(){
          await getWebPage();
     }
 }
-
-
-
 async function getRelevantSection(stepLine, file) {
-    alert("Wait for Change, getting relevant text from next file");
+    /*alert("Wait for Change, getting relevant text from next file");
      var obj = {line: stepLine, fileName: file}
      const response = await fetch("/stepIn", {
       method: "POST",
@@ -99,29 +96,45 @@ async function getRelevantSection(stepLine, file) {
          "Content-Type": "application/json",
       },
       body: JSON.stringify(obj),
-    });
-    var res = await response.json()
-    var string = JSON.parse(res)
-     alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + string)
+    });*/
+    //var res = await response.json()
+     //alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + string)
     // get the page.
     // highlight any that start with, what we have and end with
+    var string = `All legislative Powers herein granted shall be vested in a
+Congress of the United States, which shall consist of a Sen-
+ate and House of Representatives.`
+    var arr = string.split("\n");
     var fileName = fileOrder[currFileIndex];
     var ind = 1;
+    var jIn = 0;
     var newPage = page;
+    var count = 0;
     var textFound = false;
     var newPageText = text;
-    while(!textFound && ind <= pdf.numPages) {
+       while(jIn < arr.length && ind <= pdf.numPages) {
         for(let i  =0; i < newPageText.items.length; i++) {
-             if(newPageText.items[i].str.includes(string)) {
+             if(newPageText.items[i].str.includes(arr[jIn])) {
+                console.log("found: " + newPageText.items[i].str);
                 page = newPage;
                 text = newPageText;
                 numTimes = -1;
+                num = ind;
                 addText(text);
                 for(let i = 0; i < textDiv.childNodes.length; i++) {
-                    if(textDiv.childNodes[i].innerText.includes(string)) {
+                    console.log("textDiv:" + textDiv.childNodes[i].innerText);
+                    if(textDiv.childNodes[i].innerText.includes(arr[jIn])) {
+                         console.log("Highlighted!")
                          textDiv.childNodes[i].style.backgroundColor = "lightgrey"
+                         jIn += 1;
+                    }
+                    if(jIn >= arr.length) {
+                        console.log("found");
+                        break;
                     }
                 }
+                count += 1;
+                console.log(count);
                 const viewport = page.getViewport({scale});
                 page.render({ canvasContext: context, viewport});
              }
@@ -132,6 +145,7 @@ async function getRelevantSection(stepLine, file) {
             newPageText = await newPage.getTextContent();
         }
     }
+
  
 }
 export async function stepOut() {
