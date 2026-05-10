@@ -88,7 +88,6 @@ export async function stepIn(){
     }
 }
 async function getRelevantSection(stepLine, file) {
-    /*alert("Wait for Change, getting relevant text from next file");
      var obj = {line: stepLine, fileName: file}
      const response = await fetch("/stepIn", {
       method: "POST",
@@ -96,15 +95,19 @@ async function getRelevantSection(stepLine, file) {
          "Content-Type": "application/json",
       },
       body: JSON.stringify(obj),
-    });*/
-    //var res = await response.json()
-     //alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + string)
+    });
+    var res = await response.json()
+    var string = JSON.parse(res);
+     alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + string)
     // get the page.
     // highlight any that start with, what we have and end with
-    var string = `All legislative Powers herein granted shall be vested in a
-Congress of the United States, which shall consist of a Sen-
-ate and House of Representatives.`
-    var arr = string.split("\n");
+    var arr = string.trim().split("\n");
+    for(let i = 0; i < arr.length; i++) {
+        if(arr[i].charAt(arr[i].length -1) == ' ') {
+             arr[i] = arr[i].substring(0, arr[i].length-1);
+             console.log("String: " + arr[i]);
+        }
+    }
     var fileName = fileOrder[currFileIndex];
     var ind = 1;
     var jIn = 0;
@@ -156,10 +159,10 @@ export async function stepOut() {
 }
 
 async function loadFile(fileName) {
-    const url = `/static/${fileName}`;
+    const urlName = `/static/${fileName}`;
 
     // loading document
-    const loadingDoc = pdfjsLib.getDocument(url);
+    const loadingDoc = pdfjsLib.getDocument({url: urlName});
     pdf = await loadingDoc.promise;
     num = 1;
     numTimes = -1;

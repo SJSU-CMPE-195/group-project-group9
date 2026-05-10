@@ -75,7 +75,8 @@ def getRelevantText(line, fileName):
 
    ])
    promptRes = response.message.content 
-   print(promptRes)  
+   print(promptRes)
+     
    """for i in range(len(document.pages)):
       if(document.pages[i].extract_text().strip().find(promptRes.strip()) != -1):
           pageNum = i"""
