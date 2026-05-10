@@ -111,10 +111,10 @@ export async function stepOut() {
 }
 
 async function loadFile(fileName) {
-    const url = `/static/${fileName}`;
+    const urlName = `/static/${fileName}`;
 
     // loading document
-    const loadingDoc = pdfjsLib.getDocument(url);
+    const loadingDoc = pdfjsLib.getDocument({url: urlName});
     pdf = await loadingDoc.promise;
     num = 1;
     numTimes = -1;
