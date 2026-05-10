@@ -87,7 +87,6 @@ export async function stepIn(){
          await getWebPage();
     }
 }
-
 async function getRelevantSection(stepLine, file) {
      var obj = {line: stepLine, fileName: file}
      const response = await fetch("/stepIn", {
@@ -98,10 +97,59 @@ async function getRelevantSection(stepLine, file) {
       body: JSON.stringify(obj),
     });
     var res = await response.json()
-    var str = JSON.parse(res)
+    var string = JSON.parse(res);
+     alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + string)
     // get the page.
     // highlight any that start with, what we have and end with
-    alert("Stepped in with: " + stepLine + "Relevant Text from this file: " + file + "\n" + str)
+    var arr = string.trim().split("\n");
+    for(let i = 0; i < arr.length; i++) {
+        if(arr[i].charAt(arr[i].length -1) == ' ') {
+             arr[i] = arr[i].substring(0, arr[i].length-1);
+             console.log("String: " + arr[i]);
+        }
+    }
+    var fileName = fileOrder[currFileIndex];
+    var ind = 1;
+    var jIn = 0;
+    var newPage = page;
+    var count = 0;
+    var textFound = false;
+    var newPageText = text;
+       while(jIn < arr.length && ind <= pdf.numPages) {
+        for(let i  =0; i < newPageText.items.length; i++) {
+             if(newPageText.items[i].str.includes(arr[jIn])) {
+                console.log("found: " + newPageText.items[i].str);
+                page = newPage;
+                text = newPageText;
+                numTimes = -1;
+                num = ind;
+                addText(text);
+                for(let i = 0; i < textDiv.childNodes.length; i++) {
+                    console.log("textDiv:" + textDiv.childNodes[i].innerText);
+                    if(textDiv.childNodes[i].innerText.includes(arr[jIn])) {
+                         console.log("Highlighted!")
+                         textDiv.childNodes[i].style.backgroundColor = "lightgrey"
+                         jIn += 1;
+                    }
+                    if(jIn >= arr.length) {
+                        console.log("found");
+                        break;
+                    }
+                }
+                count += 1;
+                console.log(count);
+                const viewport = page.getViewport({scale});
+                page.render({ canvasContext: context, viewport});
+             }
+        }
+        ind = ind + 1;
+        if( ind <= pdf.numPages) {
+            newPage = await pdf.getPage(ind)
+            newPageText = await newPage.getTextContent();
+        }
+    }
+
+ 
 }
 export async function stepOut() {
     if (currFileIndex > 0) {
@@ -208,7 +256,6 @@ async function getNextPage() {
     addText(text);
     const viewport = page.getViewport({scale});
     page.render({ canvasContext: context, viewport});
-    findText();
 }
 async function getWebPage() {
     // add a branch to check if there are no stepins.
@@ -258,7 +305,7 @@ toggleBtn.addEventListener("click", function() {
     }
 });
 
-setFileOrder("StanfordPaper1.pdf, constitution.pdf, holmes.pdf");
+setFileOrder("StanfordPaper1.pdf, ConstitutionWords.pdf, constitution.pdf, holmes.pdf");
 setCurrFile("StanfordPaper1.pdf");
 await loadFile("StanfordPaper1.pdf");
 // frin
